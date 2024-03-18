@@ -14,7 +14,7 @@
 
 const tabs = await chrome.tabs.query({});
 const collator = new Intl.Collator();
-tabs.sort((a, b) => collator.compare(a.url, b.url));
+tabs.sort((a, b) => collator.compare(a.favIconUrl, b.favIconUrl));
 
 console.log('tabs', tabs)
 
@@ -39,29 +39,32 @@ for (const tab of tabs) {
   elements.add(element);
   tabUrls.push({
     tabId: tab.id,
+    tabIcon: tab.favIconUrl,
     tabUrl: tabUrl,
   });
 }
+
 document.querySelector("ul").append(...elements);
 
 const unique = [...new Map(
   tabUrls.map((m) => [m.tabUrl, m])).values()
 ];
 
-const tabToCloses = tabUrls.filter(
-  (item) => !unique.includes(item)
-);
-
-const button = document.querySelector("button");
-const clearDuplicateButton = document.querySelector("button2");
+const button = document.querySelector('.duplicate');
 button.addEventListener("click", async () => {
-  for (const tabToClose of tabToCloses) {
-    chrome.tabs.remove(tabToClose.tabId, function () {
+  closeDuplicatedTabExceptOne();
+});
+
+function closeDuplicatedTabExceptOne() {
+  const closeTabs = tabUrls.filter((item) => !unique.includes(item))
+  console.log('closetabs', closeTabs)
+
+  for (const closeTab of closeTabs) {
+    chrome.tabs.remove(closeTab.tabId, function () {
       console.log("Closed multiple tabs");
     });
   }
-});
-
+}
 
 function parseURL(url) {
   var regex = /^https:\/\/([^\/]+)\/(.*)$/;
