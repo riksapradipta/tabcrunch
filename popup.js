@@ -13,6 +13,7 @@
 // limitations under the License.
 
 const tabs = await chrome.tabs.query({});
+<<<<<<< Updated upstream
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator
 const collator = new Intl.Collator();
@@ -28,6 +29,25 @@ for (const tab of tabs) {
 
   element.querySelector(".title").textContent = title;
   element.querySelector(".pathname").textContent = pathname;
+=======
+const collator = new Intl.Collator();
+tabs.sort((a, b) => collator.compare(a.url, b.url));
+
+console.log('tabs', tabs)
+
+const template = document.getElementById("list_template");
+const elements = new Set();
+const tabUrls = new Array();
+
+for (const tab of tabs) {
+  const element = template.content.firstElementChild.cloneNode(true);
+
+  const tabTitle = tab.title.split("-")[0].trim();
+  const tabUrl = parseURL(tab.url);
+
+  element.querySelector(".url").textContent = tabUrl;
+  element.querySelector(".title").textContent = tabTitle;
+>>>>>>> Stashed changes
   element.querySelector("a").addEventListener("click", async () => {
     // need to focus window as well as the active tab
     await chrome.tabs.update(tab.id, { active: true });
@@ -35,6 +55,7 @@ for (const tab of tabs) {
   });
 
   elements.add(element);
+<<<<<<< Updated upstream
 }
 document.querySelector("ul").append(...elements);
 
@@ -46,3 +67,42 @@ button.addEventListener("click", async () => {
     await chrome.tabGroups.update(group, { title: "DOCS" });
   }
 });
+=======
+  tabUrls.push({
+    tabId: tab.id,
+    tabUrl: tabUrl,
+  });
+}
+document.querySelector("ul").append(...elements);
+
+const unique = [...new Map(
+  tabUrls.map((m) => [m.tabUrl, m])).values()
+];
+
+const tabToCloses = tabUrls.filter(
+  (item) => !unique.includes(item)
+);
+
+const button = document.querySelector("button");
+const clearDuplicateButton = document.querySelector("button2");
+button.addEventListener("click", async () => {
+  for (const tabToClose of tabToCloses) {
+    chrome.tabs.remove(tabToClose.tabId, function () {
+      console.log("Closed multiple tabs");
+    });
+  }
+});
+
+
+function parseURL(url) {
+  var regex = /^https:\/\/([^\/]+)\/(.*)$/;
+  var match = url.match(regex);
+  
+  if (match) {
+      var domain = match[1];
+      return domain;
+  } else {
+      return null; // URL format doesn't match
+  }
+}
+>>>>>>> Stashed changes

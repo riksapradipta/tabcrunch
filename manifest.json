@@ -1,5 +1,6 @@
 {
     "manifest_version": 3,
+<<<<<<< Updated upstream
     "name": "Tab Manager for Chrome Dev Docs",
     "version": "1.0",
     "icons": {
@@ -15,3 +16,20 @@
         "tabGroups"
     ]
 }
+=======
+    "name": "Hello Extensions",
+    "description": "Base Level Extension",
+    "version": "1.0",
+    "action": {
+      "default_popup": "hello.html"
+    },
+    "permissions": [
+        "tabs"
+    ],
+    "host_permissions": [
+        "http://*/*",
+        "https://*/*"
+      ]
+    
+  }
+>>>>>>> Stashed changes
