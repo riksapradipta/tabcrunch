@@ -16,15 +16,16 @@ const tabs = await chrome.tabs.query({});
 const collator = new Intl.Collator();
 tabs.sort((a, b) => collator.compare(a.favIconUrl, b.favIconUrl));
 
-console.log('tabs', tabs)
-
 const template = document.getElementById("list_template");
+const niceElement = document.querySelector(".nice.stat-value");
+const niceDesc = document.querySelector(".nice.stat-desc");
 const elements = new Set();
 const tabUrls = new Array();
 
+niceElement.textContent = `${tabs.length} tab${tabs.length !== 1 ? "s" : ""}`;
+
 for (const tab of tabs) {
   const element = template.content.firstElementChild.cloneNode(true);
-
   const tabTitle = tab.title.split("-")[0].trim();
   const tabUrl = parseURL(tab.url);
 
@@ -46,21 +47,31 @@ for (const tab of tabs) {
 
 document.querySelector("ul").append(...elements);
 
-const unique = [...new Map(
-  tabUrls.map((m) => [m.tabUrl, m])).values()
-];
+const unique = [...new Map(tabUrls.map((m) => [m.tabUrl, m])).values()];
 
-const button = document.querySelector('.duplicate');
+niceDesc.textContent = `with ${
+  tabUrls.filter((item) => !unique.includes(item)).length
+} duplicated tabs`;
+
+const button = document.querySelector(".duplicate");
 button.addEventListener("click", async () => {
   closeDuplicatedTabExceptOne();
 });
 
 function closeDuplicatedTabExceptOne() {
-  const closeTabs = tabUrls.filter((item) => !unique.includes(item))
-  console.log('closetabs', closeTabs)
+  const closeTabs = tabUrls.filter((item) => !unique.includes(item));
+  console.log("closetabs", closeTabs);
 
   for (const closeTab of closeTabs) {
     chrome.tabs.remove(closeTab.tabId, function () {
+      niceDesc.textContent = `with ${
+        tabUrls.filter((item) => !unique.includes(item)).length
+      } duplicated tabs`;
+      console.log(
+        "closetabs",
+        tabUrls.filter((item) => !unique.includes(item)).length
+      );
+
       console.log("Closed multiple tabs");
     });
   }
@@ -69,11 +80,11 @@ function closeDuplicatedTabExceptOne() {
 function parseURL(url) {
   var regex = /^https:\/\/([^\/]+)\/(.*)$/;
   var match = url.match(regex);
-  
+
   if (match) {
-      var domain = match[1];
-      return domain;
+    var domain = match[1];
+    return domain;
   } else {
-      return null; // URL format doesn't match
+    return null; // URL format doesn't match
   }
 }
