@@ -17,12 +17,15 @@ const collator = new Intl.Collator();
 tabs.sort((a, b) => collator.compare(a.favIconUrl, b.favIconUrl));
 
 const template = document.getElementById("list_template");
-const niceElement = document.querySelector(".nice.stat-value");
-const niceDesc = document.querySelector(".nice.stat-desc");
+const niceElement = document.querySelector("#title");
+const niceDesc = document.getElementById("desc");
 const elements = new Set();
 const tabUrls = new Array();
 
 niceElement.textContent = `${tabs.length} tab${tabs.length !== 1 ? "s" : ""}`;
+
+
+
 
 for (const tab of tabs) {
   const element = template.content.firstElementChild.cloneNode(true);
@@ -31,11 +34,7 @@ for (const tab of tabs) {
 
   element.querySelector(".url").textContent = tabUrl;
   element.querySelector(".title").textContent = tabTitle;
-  element.querySelector("a").addEventListener("click", async () => {
-    // need to focus window as well as the active tab
-    await chrome.tabs.update(tab.id, { active: true });
-    await chrome.windows.update(tab.windowId, { focused: true });
-  });
+
 
   elements.add(element);
   tabUrls.push({
@@ -49,13 +48,14 @@ document.querySelector("ul").append(...elements);
 
 const unique = [...new Map(tabUrls.map((m) => [m.tabUrl, m])).values()];
 
-niceDesc.textContent = `with ${
+niceElement.textContent = `${
   tabUrls.filter((item) => !unique.includes(item)).length
 } duplicated tabs`;
 
 const button = document.querySelector(".duplicate");
 button.addEventListener("click", async () => {
   closeDuplicatedTabExceptOne();
+  niceElement.textContent = `All Clear!`;
 });
 
 function closeDuplicatedTabExceptOne() {
@@ -63,17 +63,7 @@ function closeDuplicatedTabExceptOne() {
   console.log("closetabs", closeTabs);
 
   for (const closeTab of closeTabs) {
-    chrome.tabs.remove(closeTab.tabId, function () {
-      niceDesc.textContent = `with ${
-        tabUrls.filter((item) => !unique.includes(item)).length
-      } duplicated tabs`;
-      console.log(
-        "closetabs",
-        tabUrls.filter((item) => !unique.includes(item)).length
-      );
-
-      console.log("Closed multiple tabs");
-    });
+    chrome.tabs.remove(closeTab.tabId, function () {});
   }
 }
 
