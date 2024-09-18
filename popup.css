@@ -1,39 +1,54 @@
-/* 
-Copyright 2022 Google LLC
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 body {
-  width: 20rem;
+  background-color: rgb(237, 237, 237);
+  font-family: "Plus Jakarta Sans";
   height: fit-content;
+  width: 20rem;
 }
 
-.headerSticky {
-  position: sticky;
-  top: 0; /* The distance from the top of the viewport */
-  background: linear-gradient(45deg, #03045e, #023e8a, #0077b6);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: adds a shadow for better visibility */
-  z-index: 1000; /* Optional: ensures it stays on top of other content */
+.card {
+  opacity: 100%;
 }
-carousel {
-  padding: 2px;
+
+#title {
+  font-weight: 800;
+  font-size: 20px;
+}
+#description {
+  opacity: 60%;
+}
+
+.card {
+  --bs-card-border-color: transparent;
+}
+
+.btn {
+  --bs-btn-font-size: 12px;
+  --bs-btn-border-radius: 4rem;
+}
+.btn-primary {
+  --bs-btn-font-weight: 600;
+}
+
+.btn-secondary {
+  --bs-btn-font-weight: 600;
+  --bs-btn-border-radius: 4rem;
+  --bs-btn-bg: #fa7e3c;
+  --bs-btn-box-shadow: transparent;
+  --bs-btn-hover-border-color: transparent;
+  --bs-btn-border-color: transparent;
+  --bs-btn-hover-bg: #fa5e0a;
+}
+
+.niceTitle {
+  font-weight: 500;
+  color: #000000;
+  opacity: 60%;
+  font-size: 16px;
 }
 
 h1 {
-  font-family: "Montserrat";
+  font-weight: 600;
   font-size: 24px;
-  padding: 10px;
 
   /** TEXT GRADIENT */
   color: #487ae3;
@@ -45,7 +60,6 @@ h1 {
   );
   background-clip: text;
   -webkit-background-clip: text;
-  text-fill-color: transparent;
   -webkit-text-fill-color: transparent;
 }
 

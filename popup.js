@@ -11,60 +11,106 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-const tabs = await chrome.tabs.query({});
+document.getElementsByTagName("head")[0].innerHTML +=
+  "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src gap://ready file://* *; style-src 'self' http://* https://* 'unsafe-inline'; script-src 'self' http://* https://* 'unsafe-inline' 'unsafe-eval'\">";
+let tabs = await chrome.tabs.query({});
 const collator = new Intl.Collator();
 tabs.sort((a, b) => collator.compare(a.favIconUrl, b.favIconUrl));
 
-const template = document.getElementById("list_template");
-const niceElement = document.querySelector("#title");
-const niceDesc = document.getElementById("desc");
+// const template = document.getElementById("list_template");
+const niceElement = document.getElementById("title");
+const niceDesc = document.getElementById("description");
 const elements = new Set();
 const tabUrls = new Array();
+const tabIcons = new Array();
 
-niceElement.textContent = `${tabs.length} tab${tabs.length !== 1 ? "s" : ""}`;
-
-
-
+niceElement.textContent = `${tabs.length}`;
+niceDesc.textContent = `with ${tabs.length} tabs opened`;
 
 for (const tab of tabs) {
-  const element = template.content.firstElementChild.cloneNode(true);
-  const tabTitle = tab.title.split("-")[0].trim();
+  // const element = template.content.firstElementChild.cloneNode(true);
+  // const tabTitle = tab.title.split("-")[0].trim();
   const tabUrl = parseURL(tab.url);
 
-  element.querySelector(".url").textContent = tabUrl;
-  element.querySelector(".title").textContent = tabTitle;
+  // element.querySelector(".titleList").textContent = tabTitle;
 
-
-  elements.add(element);
+  // elements.add(element);
   tabUrls.push({
     tabId: tab.id,
-    tabIcon: tab.favIconUrl,
     tabUrl: tabUrl,
+  });
+
+  tabIcons.push({
+    tabIcon: tab.favIconUrl,
+    tabId: tab.id,
+    tabIndex: tab.index,
+    tabLast: tab.lastAccessed,
   });
 }
 
-document.querySelector("ul").append(...elements);
+// document.querySelector("ul").append(...elements);
 
-const unique = [...new Map(tabUrls.map((m) => [m.tabUrl, m])).values()];
+function getTabs() {
+  return browser.tabs.query(queryInfo);
+}
+
+function sortByIcons() {
+  // Move tabs to new positions
+  tabIcons.sort().forEach((icon, index) => {
+    chrome.tabs.move(icon.tabId, { index: index }, function () {});
+  });
+}
+
+const uniqueTabs = [...new Map(tabUrls.map((m) => [m.tabUrl, m])).values()];
 
 niceElement.textContent = `${
-  tabUrls.filter((item) => !unique.includes(item)).length
+  tabUrls.filter((item) => !uniqueTabs.includes(item)).length
 } duplicated tabs`;
 
-const button = document.querySelector(".duplicate");
-button.addEventListener("click", async () => {
+document.querySelector(".duplicate").addEventListener("click", async () => {
   closeDuplicatedTabExceptOne();
-  niceElement.textContent = `All Clear!`;
 });
 
+document.getElementById("sortButton").addEventListener("click", async () => {
+  sortByIcons();
+});
+
+async function fetchTabs() {
+  tabs = await chrome.tabs.query({});
+}
+
+async function myFunction() {
+  return browser.tabs.query();
+}
+
+myFunction().then(
+  function (value) {
+    console.log("try", value);
+    myDisplayer(value);
+  },
+  function (error) {
+    myDisplayer(error);
+  }
+);
+
+function myDisplayer(value) {
+  console.log(value);
+}
+
 function closeDuplicatedTabExceptOne() {
-  const closeTabs = tabUrls.filter((item) => !unique.includes(item));
-  console.log("closetabs", closeTabs);
+  const closeTabs = tabUrls.filter((item) => !uniqueTabs.includes(item));
 
   for (const closeTab of closeTabs) {
     chrome.tabs.remove(closeTab.tabId, function () {});
   }
+
+  fetchTabs();
+  myFunction();
+  getTabs();
+  console.log("tabs", getTabs());
+  console.log(myFunction);
+
+  niceElement.textContent = `${tabs.length} tabs opened`;
 }
 
 function parseURL(url) {
