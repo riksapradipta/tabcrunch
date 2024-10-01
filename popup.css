@@ -29,14 +29,18 @@ body {
   --bs-btn-font-weight: 600;
 }
 
+.custom-text-color {
+  color: #ff5733; /* Your desired text color */
+}
+
 .btn-secondary {
   --bs-btn-font-weight: 600;
   --bs-btn-border-radius: 4rem;
-  --bs-btn-bg: #fa7e3c;
+  --bs-btn-bg: rgb(254, 126, 57, .1);
   --bs-btn-box-shadow: transparent;
   --bs-btn-hover-border-color: transparent;
   --bs-btn-border-color: transparent;
-  --bs-btn-hover-bg: #fa5e0a;
+  --bs-btn-hover-bg: rgb(254, 126, 57);
 }
 
 .niceTitle {
