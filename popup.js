@@ -1,126 +1,127 @@
-// Copyright 2022 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-document.getElementsByTagName("head")[0].innerHTML +=
-  "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src gap://ready file://* *; style-src 'self' http://* https://* 'unsafe-inline'; script-src 'self' http://* https://* 'unsafe-inline' 'unsafe-eval'\">";
-let tabs = await chrome.tabs.query({});
-const collator = new Intl.Collator();
-tabs.sort((a, b) => collator.compare(a.favIconUrl, b.favIconUrl));
+// Add Content-Security-Policy
+document.getElementsByTagName(
+  "head"
+)[0].innerHTML += `<meta http-equiv="Content-Security-Policy" content="default-src gap://ready file://* *; style-src 'self' http://* https://* 'unsafe-inline'; script-src 'self' http://* https://* 'unsafe-inline' 'unsafe-eval';">`;
 
-// const template = document.getElementById("list_template");
+// Initialize variables
+let tabs = [];
+const collator = new Intl.Collator();
 const niceElement = document.getElementById("title");
 const niceDesc = document.getElementById("description");
-const elements = new Set();
-const tabUrls = new Array();
-const tabIcons = new Array();
 
-niceElement.textContent = `${tabs.length}`;
-niceDesc.textContent = `with ${tabs.length} tabs opened`;
+// Initialize tabs and update UI
+async function initializeTabs() {
+  try {
+    tabs = await queryTabs(); // Populate the array with tabs
+    updateUI(); // Update UI after tabs are initialized
+  } catch (error) {
+    console.error("Error initializing tabs:", error);
+  }
+}
 
-for (const tab of tabs) {
-  // const element = template.content.firstElementChild.cloneNode(true);
-  // const tabTitle = tab.title.split("-")[0].trim();
-  const tabUrl = parseURL(tab.url);
-
-  // element.querySelector(".titleList").textContent = tabTitle;
-
-  // elements.add(element);
-  tabUrls.push({
-    tabId: tab.id,
-    tabUrl: tabUrl,
+// Query all tabs
+function queryTabs() {
+  return new Promise((resolve, reject) => {
+    chrome.tabs.query({}, (result) => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+      } else {
+        resolve(result);
+      }
+    });
   });
+}
 
-  tabIcons.push({
+// Update UI with the number of tabs and duplicates
+function updateUI() {
+  if (!tabs.length) {
+    niceElement.textContent = "No tabs opened";
+    niceDesc.textContent = "";
+    return;
+  }
+
+  // Sort tabs by favIconUrl
+  tabs.sort((a, b) => collator.compare(a.favIconUrl || "", b.favIconUrl || ""));
+
+  // Map tab URLs and icons
+  const tabUrls = tabs.map((tab) => ({
+    tabId: tab.id,
+    tabUrl: parseURL(tab.url),
+  }));
+
+  const tabIcons = tabs.map((tab) => ({
     tabIcon: tab.favIconUrl,
     tabId: tab.id,
     tabIndex: tab.index,
     tabLast: tab.lastAccessed,
-  });
-}
+  }));
 
-// document.querySelector("ul").append(...elements);
+  // Identify unique tabs
+  const uniqueTabs = [...new Map(tabUrls.map((m) => [m.tabUrl, m])).values()];
 
-function getTabs() {
-  return browser.tabs.query(queryInfo);
-}
+  // Count duplicates
+  const duplicatesCount = tabUrls.length - uniqueTabs.length;
 
-function sortByIcons() {
-  // Move tabs to new positions
-  tabIcons.sort().forEach((icon, index) => {
-    chrome.tabs.move(icon.tabId, { index: index }, function () {});
-  });
-}
-
-const uniqueTabs = [...new Map(tabUrls.map((m) => [m.tabUrl, m])).values()];
-
-niceElement.textContent = `${
-  tabUrls.filter((item) => !uniqueTabs.includes(item)).length
-} duplicated tabs`;
-
-document.querySelector(".duplicate").addEventListener("click", async () => {
-  closeDuplicatedTabExceptOne();
-});
-
-document.getElementById("sortButton").addEventListener("click", async () => {
-  sortByIcons();
-});
-
-async function fetchTabs() {
-  tabs = await chrome.tabs.query({});
-}
-
-async function myFunction() {
-  return browser.tabs.query();
-}
-
-myFunction().then(
-  function (value) {
-    console.log("try", value);
-    myDisplayer(value);
-  },
-  function (error) {
-    myDisplayer(error);
-  }
-);
-
-function myDisplayer(value) {
-  console.log(value);
-}
-
-function closeDuplicatedTabExceptOne() {
-  const closeTabs = tabUrls.filter((item) => !uniqueTabs.includes(item));
-
-  for (const closeTab of closeTabs) {
-    chrome.tabs.remove(closeTab.tabId, function () {});
-  }
-
-  fetchTabs();
-  myFunction();
-  getTabs();
-  console.log("tabs", getTabs());
-  console.log(myFunction);
-
-  niceElement.textContent = `${tabs.length} tabs opened`;
-}
-
-function parseURL(url) {
-  var regex = /^https:\/\/([^\/]+)\/(.*)$/;
-  var match = url.match(regex);
-
-  if (match) {
-    var domain = match[1];
-    return domain;
+  // Update UI
+  if (duplicatesCount === 0) {
+    niceElement.textContent = "No duplicated tabs";
+    niceDesc.textContent = `with ${tabs.length} tabs opened`;
   } else {
-    return null; // URL format doesn't match
+    niceElement.textContent = `${duplicatesCount} duplicated tabs`;
+    niceDesc.textContent = `with ${tabs.length} tabs opened`;
   }
+
+  // Add event listeners
+  document.querySelector(".duplicate").addEventListener("click", () => {
+    closeDuplicatedTabExceptOne(tabUrls, uniqueTabs);
+  });
+
+  document.getElementById("sortButton").addEventListener("click", () => {
+    sortByIcons(tabIcons);
+  });
 }
+
+// Parse URL to extract domain
+function parseURL(url) {
+  const regex = /^https:\/\/([^\/]+)\/(.*)$/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+}
+
+// Close duplicated tabs, except for the active tab
+function closeDuplicatedTabExceptOne(tabUrls, uniqueTabs) {
+  chrome.tabs.query({ active: true, currentWindow: true }, (activeTabs) => {
+    const activeTab = activeTabs[0];
+
+    // Filter tabs to close: exclude the active tab and unique tabs
+    const closeTabs = tabUrls.filter(
+      (item) => !uniqueTabs.includes(item)
+      //  && item.tabId !== activeTab.id
+    );
+
+    // Close the filtered tabs
+    for (const closeTab of closeTabs) {
+      chrome.tabs.remove(closeTab.tabId, () => {});
+    }
+
+    // Update UI
+    const remainingTabs = tabs.length - closeTabs.length;
+    if (remainingTabs > 0) {
+      niceElement.textContent = `${remainingTabs} tabs opened`;
+    } else {
+      niceElement.textContent = "No duplicated tabs";
+    }
+  });
+}
+
+// Sort tabs by icons
+function sortByIcons(tabIcons) {
+  tabIcons
+    .sort((a, b) => collator.compare(a.tabIcon || "", b.tabIcon || ""))
+    .forEach((icon, index) => {
+      chrome.tabs.move(icon.tabId, { index }, () => {});
+    });
+}
+
+// Initialize tabs on load
+initializeTabs();
