@@ -1,19 +1,36 @@
+// Constants
+const UI_ELEMENTS = {
+  titleElement: document.getElementById("title"),
+  descriptionElement: document.getElementById("description"),
+};
 
-// Initialize variables
-let tabs = [];
 const collator = new Intl.Collator();
-const niceElement = document.getElementById("title");
-const niceDesc = document.getElementById("description");
+let tabs = [];
+let autoLeftEnabled = false;
 
 // Initialize tabs and update UI
 async function initializeTabs() {
   try {
-    tabs = await queryTabs(); // Populate the array with tabs
-    updateUI(); // Update UI after tabs are initialized
+    tabs = await queryTabs();
+    updateUI();
   } catch (error) {
     console.error("Error initializing tabs:", error);
   }
 }
+
+function toggleAutoLeft(event) {
+  const isChecked = event.target.checked;
+  chrome.storage.sync.set({ autoLeftEnabled: isChecked }, () => {
+    autoLeftEnabled = isChecked;
+    console.log("Auto left toggled:", autoLeftEnabled);
+  });
+}
+
+// Load initial state
+chrome.storage.sync.get(["autoLeftEnabled"], (result) => {
+  autoLeftEnabled = result.autoLeftEnabled || false;
+  document.querySelector(".form-switch input").checked = autoLeftEnabled;
+});
 
 // Query all tabs
 function queryTabs() {
@@ -28,53 +45,59 @@ function queryTabs() {
   });
 }
 
+// Update UI elements with text
+function updateUIText(title, description = "") {
+  UI_ELEMENTS.titleElement.textContent = title;
+  UI_ELEMENTS.descriptionElement.textContent = description;
+}
+
+// Extract tab information
+function extractTabInfo(tabs) {
+  return {
+    urls: tabs.map((tab) => ({
+      tabId: tab.id,
+      tabUrl: parseURL(tab.url),
+    })),
+    icons: tabs.map((tab) => ({
+      tabIcon: tab.favIconUrl,
+      tabId: tab.id,
+      tabIndex: tab.index,
+      tabLast: tab.lastAccessed,
+    })),
+  };
+}
+
 // Update UI with the number of tabs and duplicates
 function updateUI() {
   if (!tabs.length) {
-    niceElement.textContent = "No tabs opened";
-    niceDesc.textContent = "";
+    updateUIText("No tabs opened");
     return;
   }
 
-  // Sort tabs by favIconUrl
   tabs.sort((a, b) => collator.compare(a.favIconUrl || "", b.favIconUrl || ""));
+  const { urls, icons } = extractTabInfo(tabs);
+  const uniqueTabs = [...new Map(urls.map((m) => [m.tabUrl, m])).values()];
+  const duplicatesCount = urls.length - uniqueTabs.length;
 
-  // Map tab URLs and icons
-  const tabUrls = tabs.map((tab) => ({
-    tabId: tab.id,
-    tabUrl: parseURL(tab.url),
-  }));
-
-  const tabIcons = tabs.map((tab) => ({
-    tabIcon: tab.favIconUrl,
-    tabId: tab.id,
-    tabIndex: tab.index,
-    tabLast: tab.lastAccessed,
-  }));
-
-  // Identify unique tabs
-  const uniqueTabs = [...new Map(tabUrls.map((m) => [m.tabUrl, m])).values()];
-
-  // Count duplicates
-  const duplicatesCount = tabUrls.length - uniqueTabs.length;
-
-  // Update UI
-  if (duplicatesCount === 0) {
-    niceElement.textContent = "No duplicated tabs";
-    niceDesc.textContent = `with ${tabs.length} tabs opened`;
-  } else {
-    niceElement.textContent = `${duplicatesCount} duplicated tabs`;
-    niceDesc.textContent = `with ${tabs.length} tabs opened`;
-  }
+  const statusText =
+    duplicatesCount === 0
+      ? "No duplicated tabs"
+      : `${duplicatesCount} duplicated tabs`;
+  updateUIText(statusText, `with ${tabs.length} tabs opened`);
 
   // Add event listeners
-  document.querySelector(".duplicate").addEventListener("click", () => {
-    closeDuplicatedTabExceptOne(tabUrls, uniqueTabs);
-  });
+  document
+    .getElementById("checkNativeSwitch")
+    .addEventListener("click", () => toggleAutoLeft);
 
-  document.getElementById("sortButton").addEventListener("click", () => {
-    sortByIcons(tabIcons);
-  });
+  document
+    .querySelector(".duplicate")
+    .addEventListener("click", () =>
+      closeDuplicatedTabExceptOne(urls, uniqueTabs)
+    );
+  document
+    .getElementById("sortButton")
+    .addEventListener("click", () => sortByIcons(icons));
 }
 
 // Parse URL to extract domain
@@ -87,26 +110,14 @@ function parseURL(url) {
 // Close duplicated tabs, except for the active tab
 function closeDuplicatedTabExceptOne(tabUrls, uniqueTabs) {
   chrome.tabs.query({ active: true, currentWindow: true }, (activeTabs) => {
-    const activeTab = activeTabs[0];
+    const closeTabs = tabUrls.filter((item) => !uniqueTabs.includes(item));
 
-    // Filter tabs to close: exclude the active tab and unique tabs
-    const closeTabs = tabUrls.filter(
-      (item) => !uniqueTabs.includes(item)
-      //  && item.tabId !== activeTab.id
-    );
+    closeTabs.forEach((tab) => chrome.tabs.remove(tab.tabId, () => {}));
 
-    // Close the filtered tabs
-    for (const closeTab of closeTabs) {
-      chrome.tabs.remove(closeTab.tabId, () => {});
-    }
-
-    // Update UI
     const remainingTabs = tabs.length - closeTabs.length;
-    if (remainingTabs > 0) {
-      niceElement.textContent = `${remainingTabs} tabs opened`;
-    } else {
-      niceElement.textContent = "No duplicated tabs";
-    }
+    updateUIText(
+      remainingTabs > 0 ? `${remainingTabs} tabs opened` : "No duplicated tabs"
+    );
   });
 }
 
@@ -114,9 +125,9 @@ function closeDuplicatedTabExceptOne(tabUrls, uniqueTabs) {
 function sortByIcons(tabIcons) {
   tabIcons
     .sort((a, b) => collator.compare(a.tabIcon || "", b.tabIcon || ""))
-    .forEach((icon, index) => {
-      chrome.tabs.move(icon.tabId, { index }, () => {});
-    });
+    .forEach((icon, index) =>
+      chrome.tabs.move(icon.tabId, { index }, () => {})
+    );
 }
 
 // Initialize tabs on load

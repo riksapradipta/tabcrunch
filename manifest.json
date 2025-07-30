@@ -1,16 +1,20 @@
 {
   "manifest_version": 3,
-  "name": "Hello Extensions",
-  "description": "Base Level Extension",
+  "name": "Tab Crunch",
+  "description": "Tidy up your tabs",
   "version": "1.0",
   "action": {
     "default_popup": "hello.html"
   },
-
-  "content_scripts": [{
-     "js": ["popup.js"],
-     "matches": ["http://*/*", "https://*/*"]
-   }],
-  "permissions": ["alarms", "tabs"],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "js": ["popup.js"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
+  ],
+  "permissions": ["alarms", "tabs", "background", "storage"],
   "host_permissions": ["http://*/*", "https://*/*"]
 }

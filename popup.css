@@ -1,12 +1,25 @@
 body {
-  background-color: rgb(237, 237, 237);
+  /* background-color: #434242; */
   font-family: "Plus Jakarta Sans";
   height: fit-content;
-  width: 20rem;
+  width: 35rem;
 }
 
 .card {
   opacity: 100%;
+  /* background-color: #434242; */
+}
+
+.feature-card {
+  background-color: #434242;
+  border-radius: 19px;
+  height: 150px;
+
+  transition: background-color 0.3s ease;
+}
+
+.feature-card:hover {
+  background-color: #535252;
 }
 
 #title {
@@ -30,17 +43,17 @@ body {
 }
 
 .custom-text-color {
-  color: #ff5733; /* Your desired text color */
+  color: #fe7e39; /* Your desired text color */
 }
 
 .btn-secondary {
   --bs-btn-font-weight: 600;
   --bs-btn-border-radius: 4rem;
-  --bs-btn-bg: rgb(254, 126, 57, .1);
+  --bs-btn-bg: rgb(254, 126, 57, 0.1);
   --bs-btn-box-shadow: transparent;
   --bs-btn-hover-border-color: transparent;
   --bs-btn-border-color: transparent;
-  --bs-btn-hover-bg: rgb(254, 126, 57);
+  --bs-btn-hover-bg: #fe7e39;
 }
 
 .niceTitle {
