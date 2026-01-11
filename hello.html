@@ -70,6 +70,47 @@
         </div>
       </div>
     </div>
+    <div class="row g-2 mt-1">
+      <div class="col">
+        <div class="feature-card bg-dark p-3 d-flex flex-column">
+          <div>
+            <p class="mb-1" style="font-size: 12px; font-weight: 1000; color: rgb(255, 255, 255);">Prevent duplicates
+            </p>
+            <p style="font-size: 11px; color: rgba(255, 255, 255, 0.6);">Switch to existing tab instead of opening
+              duplicate</p>
+          </div>
+          <div class="mt-auto">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="preventDuplicatesSwitch">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="feature-card bg-dark p-3 d-flex flex-column">
+          <div>
+            <p class="mb-1" style="font-size: 12px; font-weight: 1000; color: rgb(255, 255, 255);">Auto-close duplicates
+            </p>
+            <p style="font-size: 11px; color: rgba(255, 255, 255, 0.6);">Automatically close duplicate tabs (skips
+              active & media playing tabs)</p>
+          </div>
+          <div class="mt-auto d-flex align-items-center gap-2">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="autoCloseSwitch">
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" id="minutesDisplayBtn" style="font-size: 11px;">5
+              min</button>
+            <div class="input-group input-group-sm" id="minutesEditGroup" style="width: 140px; display: none;">
+              <input type="number" class="form-control bg-secondary text-white border-0" id="autoCloseMinutes" min="1"
+                max="60" value="5" style="font-size: 11px;">
+              <span class="input-group-text bg-secondary text-white border-0" style="font-size: 11px;">min</span>
+              <button class="btn btn-success btn-sm" type="button" id="saveMinutesBtn"
+                style="font-size: 10px; padding: 2px 6px;">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   </div>
   <script src="./popup.js" type="module"></script>
