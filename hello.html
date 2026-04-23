@@ -20,10 +20,21 @@
 </head>
 
 <body class="bg-secondary">
-  <div class="row m-2 p-3 bg-dark text-white rounded-4">
-    <div id="title" class="nice" style="font-size: 16px">0</div>
-    <div class="description" id="description" style="font-size: 16px">
-      tabs opened
+  <div class="row m-2 p-3 bg-dark text-white rounded-4 align-items-center g-2">
+    <div class="col">
+      <div id="title" class="nice" style="font-size: 16px">0</div>
+      <div class="description" id="description" style="font-size: 16px">
+        tabs opened
+      </div>
+    </div>
+    <div class="col-auto">
+      <div class="d-flex align-items-center gap-2 theme-toggle-wrap">
+        <span class="theme-label">Light</span>
+        <div class="form-check form-switch mb-0">
+          <input class="form-check-input" type="checkbox" id="themeToggleSwitch">
+        </div>
+        <span class="theme-label">Dark</span>
+      </div>
     </div>
   </div>
   <div class="container pb-3">
@@ -31,8 +42,8 @@
       <div class="col">
         <div class="feature-card bg-dark p-3 d-flex flex-column">
           <div>
-            <p class="mb-1" style="font-size: 12px; font-weight: 1000; color: rgb(255, 255, 255);">Auto-left</p>
-            <p style="font-size: 11px; color: rgb(255, 255, 255, 0.6);">Move your newly created tab to left side</p>
+            <p class="mb-1 feature-title">Auto-left</p>
+            <p class="feature-subtitle">Move your newly created tab to left side</p>
           </div>
           <div class="mt-auto">
             <div class="form-check form-switch">
@@ -44,9 +55,9 @@
       <div class="col">
         <div class="feature-card bg-dark p-3 d-flex flex-column">
           <div>
-            <p class="mb-1" style="font-size: 12px; font-weight: 1000; color: rgb(255, 255, 255);">Clear duplicated
+            <p class="mb-1 feature-title">Clear duplicated
               tabs</p>
-            <p style="font-size: 11px; color: rgb(255, 255, 255, 0.8);">(except active tabs
+            <p class="feature-subtitle">(except active tabs
               and media playing tabs)</p>
           </div>
           <div class="mt-auto">
@@ -59,8 +70,8 @@
       <div class="col">
         <div class="feature-card bg-dark p-3 d-flex flex-column">
           <div>
-            <p class="mb-1" style="font-size: 12px; font-weight: 1000; color: rgb(255, 255, 255);">Sort tabs</p>
-            <p style="font-size: 11px; color: rgba(255, 255, 255, 0.6);">Sort your tabs based on icons</p>
+            <p class="mb-1 feature-title">Sort tabs</p>
+            <p class="feature-subtitle">Sort your tabs based on icons</p>
           </div>
           <div class="mt-auto">
             <button id="sortButton" type="button" class="btn btn-primary btn-sm">
@@ -74,9 +85,9 @@
       <div class="col">
         <div class="feature-card bg-dark p-3 d-flex flex-column">
           <div>
-            <p class="mb-1" style="font-size: 12px; font-weight: 1000; color: rgb(255, 255, 255);">Prevent duplicates
+            <p class="mb-1 feature-title">Prevent duplicates
             </p>
-            <p style="font-size: 11px; color: rgba(255, 255, 255, 0.6);">Switch to existing tab instead of opening
+            <p class="feature-subtitle">Switch to existing tab instead of opening
               duplicate</p>
           </div>
           <div class="mt-auto">
@@ -89,9 +100,9 @@
       <div class="col">
         <div class="feature-card bg-dark p-3 d-flex flex-column">
           <div>
-            <p class="mb-1" style="font-size: 12px; font-weight: 1000; color: rgb(255, 255, 255);">Auto-close duplicates
+            <p class="mb-1 feature-title">Auto-close duplicates
             </p>
-            <p style="font-size: 11px; color: rgba(255, 255, 255, 0.6);">Automatically close duplicate tabs (skips
+            <p class="feature-subtitle">Automatically close duplicate tabs (skips
               active & media playing tabs)</p>
           </div>
           <div class="mt-auto d-flex align-items-center gap-2">

@@ -2,6 +2,7 @@
 const UI_ELEMENTS = {
   titleElement: document.getElementById("title"),
   descriptionElement: document.getElementById("description"),
+  themeToggleSwitch: document.getElementById("themeToggleSwitch"),
   autoLeftSwitch: document.getElementById("checkNativeSwitch"),
   duplicateButton: document.querySelector(".duplicate"),
   sortButton: document.getElementById("sortButton"),
@@ -19,6 +20,7 @@ let autoLeftEnabled = false;
 let autoCloseEnabled = false;
 let autoCloseMinutes = 5;
 let preventDuplicatesEnabled = false;
+let themeMode = "system";
 
 // Use modern Promise-based Chrome API wrapper
 const queryTabs = () => chrome.tabs.query({});
@@ -27,6 +29,26 @@ const queryTabs = () => chrome.tabs.query({});
 const updateUIText = (title, description = "") => {
   UI_ELEMENTS.titleElement.textContent = title;
   UI_ELEMENTS.descriptionElement.textContent = description;
+};
+
+const applyTheme = (mode) => {
+  const resolvedTheme = mode === "system"
+    ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+    : mode;
+
+  document.documentElement.dataset.theme = resolvedTheme;
+
+  if (UI_ELEMENTS.themeToggleSwitch) {
+    UI_ELEMENTS.themeToggleSwitch.checked = resolvedTheme === "dark";
+  }
+
+  themeMode = mode;
+};
+
+const toggleTheme = (event) => {
+  const nextTheme = event.target.checked ? "dark" : "light";
+  chrome.storage.sync.set({ themeMode: nextTheme });
+  applyTheme(nextTheme);
 };
 
 // Extract hostname from URL (used for tab grouping display)
@@ -198,9 +220,13 @@ const init = async () => {
   try {
     // Load settings and tabs in parallel
     const [storage, queriedTabs] = await Promise.all([
-      chrome.storage.sync.get(["autoLeftEnabled", "autoCloseEnabled", "autoCloseMinutes", "preventDuplicatesEnabled"]),
+      chrome.storage.sync.get(["autoLeftEnabled", "autoCloseEnabled", "autoCloseMinutes", "preventDuplicatesEnabled", "themeMode"]),
       queryTabs(),
     ]);
+
+    themeMode = storage.themeMode || "system";
+    applyTheme(themeMode);
+    UI_ELEMENTS.themeToggleSwitch.addEventListener("change", toggleTheme);
 
     // Auto-left settings
     autoLeftEnabled = storage.autoLeftEnabled || false;
