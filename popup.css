@@ -1,3 +1,28 @@
+.feature-card:hover,
+.feature-card:hover .feature-title,
+.feature-card:hover .feature-subtitle,
+.feature-card:hover p {
+  color: #fff !important;
+  transition: color 0.2s;
+}
+
+@media (prefers-color-scheme: light) {
+
+  .feature-card:hover,
+  .feature-card:hover .feature-title,
+  .feature-card:hover .feature-subtitle,
+  .feature-card:hover p {
+    color: #111 !important;
+  }
+}
+
+:root[data-theme="light"] .feature-card:hover,
+:root[data-theme="light"] .feature-card:hover .feature-title,
+:root[data-theme="light"] .feature-card:hover .feature-subtitle,
+:root[data-theme="light"] .feature-card:hover p {
+  color: #111 !important;
+}
+
 :root {
   color-scheme: light dark;
   --popup-bg: #f3f4f6;
@@ -87,6 +112,14 @@ body.bg-secondary {
 
 .feature-card:hover {
   background-color: var(--popup-surface-hover) !important;
+}
+
+.feature-card:hover,
+.feature-card:hover .feature-title,
+.feature-card:hover .feature-subtitle,
+.feature-card:hover p {
+  color: #fff !important;
+  transition: color 0.2s;
 }
 
 .bg-dark {
@@ -188,7 +221,7 @@ h1 {
 }
 
 .form-check-input {
-  background-color: var(--popup-surface-2);
+  background-color: var(--popup-muted);
   border-color: var(--popup-border);
 }
 

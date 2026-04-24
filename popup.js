@@ -31,6 +31,8 @@ const updateUIText = (title, description = "") => {
   UI_ELEMENTS.descriptionElement.textContent = description;
 };
 
+const formatAutoCloseLabel = (minutes) => `every ${minutes} min >`;
+
 const applyTheme = (mode) => {
   const resolvedTheme = mode === "system"
     ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
@@ -159,7 +161,7 @@ const saveAutoCloseMinutes = () => {
       minutes: autoCloseMinutes
     });
     // Update display button and hide edit group
-    UI_ELEMENTS.minutesDisplayBtn.textContent = `${minutes} min`;
+    UI_ELEMENTS.minutesDisplayBtn.textContent = formatAutoCloseLabel(minutes);
     UI_ELEMENTS.minutesEditGroup.style.display = "none";
     UI_ELEMENTS.minutesDisplayBtn.style.display = "inline-block";
   }
@@ -238,7 +240,7 @@ const init = async () => {
     autoCloseMinutes = storage.autoCloseMinutes || 5;
     UI_ELEMENTS.autoCloseSwitch.checked = autoCloseEnabled;
     UI_ELEMENTS.autoCloseMinutes.value = autoCloseMinutes;
-    UI_ELEMENTS.minutesDisplayBtn.textContent = `${autoCloseMinutes} min`;
+    UI_ELEMENTS.minutesDisplayBtn.textContent = formatAutoCloseLabel(autoCloseMinutes);
     UI_ELEMENTS.autoCloseSwitch.addEventListener("change", toggleAutoClose);
     UI_ELEMENTS.minutesDisplayBtn.addEventListener("click", showMinutesEdit);
     UI_ELEMENTS.saveMinutesBtn.addEventListener("click", saveAutoCloseMinutes);
