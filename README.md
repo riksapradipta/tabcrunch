@@ -2,12 +2,23 @@
 
 A Chrome extension to manage and clean up your tabs efficiently.
 
+
 ## Features
 
-- **Clear Duplicated Tabs** - Remove duplicate tabs with one click (skips active tabs and tabs playing media)
-- **Auto-close Duplicates** - Automatically close duplicate tabs at a custom interval (1-60 minutes)
-- **Sort Tabs** - Organize your tabs by grouping them based on their favicon
-- **Smart Tab Grouping** - New tabs are automatically placed next to tabs from the same website
+- **Remove Duplicated Tabs**
+   - Instantly close duplicate tabs (skips active and media-playing tabs)
+   - Use the popup or right-click any page for a clear the duplicated tabs
+- **Auto-close Duplicates**
+   - Automatically closes duplicate tabs at your chosen interval (1-60 minutes)
+- **Sort Tabs**
+   - Organize all your tabs by icon for a tidier tab strip
+- **Smart Tab Grouping**
+   - New tabs are placed next to others from the same website
+- **Live Tab Count**
+   - Always shows the current number of open tabs in the popup
+- **Light/Dark Mode Toggle**
+   - Switch between light and dark themes, or follow your system setting
+
 
 ## Installation (Developer Mode)
 

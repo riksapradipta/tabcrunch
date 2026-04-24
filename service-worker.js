@@ -1,3 +1,22 @@
+
+// Always create context menu on service worker start
+function createRemoveDuplicatesMenu() {
+  chrome.contextMenus.create({
+    id: "remove-duplicated-tabs",
+    title: "Remove duplicated tabs",
+    contexts: ["page"]
+  });
+}
+
+createRemoveDuplicatesMenu();
+chrome.runtime.onInstalled.addListener(createRemoveDuplicatesMenu);
+
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === "remove-duplicated-tabs") {
+    // Remove duplicates regardless of autoCloseEnabled
+    closeDuplicateTabs(true);
+  }
+});
 const ALARM_NAME = "autoCloseDuplicates";
 
 // Track tabs we've already processed to avoid moving them multiple times
@@ -138,10 +157,11 @@ function normalizeUrl(url) {
 }
 
 // Close duplicate tabs - skips active tabs and tabs playing media/audio
-async function closeDuplicateTabs() {
-  const { autoCloseEnabled } = await chrome.storage.sync.get(["autoCloseEnabled"]);
 
-  if (!autoCloseEnabled) {
+// If force is true, always remove duplicates regardless of autoCloseEnabled
+async function closeDuplicateTabs(force = false) {
+  const { autoCloseEnabled } = await chrome.storage.sync.get(["autoCloseEnabled"]);
+  if (!force && !autoCloseEnabled) {
     return;
   }
 
@@ -171,19 +191,25 @@ async function closeDuplicateTabs() {
   }
 }
 
-// Update the extension badge based on auto-close settings
+// Update the extension badge: red dot if any duplicated tabs, blank otherwise
 async function updateBadge() {
-  const { autoCloseEnabled, autoCloseMinutes } = await chrome.storage.sync.get([
-    "autoCloseEnabled",
-    "autoCloseMinutes",
-  ]);
-
-  if (autoCloseEnabled) {
-    const minutes = autoCloseMinutes || 5;
-    await chrome.action.setBadgeText({ text: `${minutes}m` });
-    await chrome.action.setBadgeBackgroundColor({ color: "#4CAF50" }); // Green background
+  const tabs = await chrome.tabs.query({});
+  const urlMap = new Map();
+  let hasDuplicate = false;
+  for (const tab of tabs) {
+    if (!tab.url) continue;
+    const normalizedUrl = normalizeUrl(tab.url);
+    if (urlMap.has(normalizedUrl)) {
+      hasDuplicate = true;
+      break;
+    }
+    urlMap.set(normalizedUrl, tab.id);
+  }
+  if (hasDuplicate) {
+    await chrome.action.setBadgeText({ text: "●" });
+    await chrome.action.setBadgeBackgroundColor({ color: "#e53935" }); // Red dot
   } else {
-    await chrome.action.setBadgeText({ text: "" }); // Clear badge
+    await chrome.action.setBadgeText({ text: "" });
   }
 }
 

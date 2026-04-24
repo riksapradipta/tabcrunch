@@ -4,17 +4,43 @@
   "description": "Tidy up your tabs",
   "version": "1.0",
   "action": {
-    "default_popup": "hello.html"
+    "default_popup": "hello.html",
+    "default_icon": {
+      "16": "frame 14.png",
+      "32": "frame 14.png",
+      "48": "frame 14.png",
+      "128": "frame 14.png"
+    }
+  },
+  "icons": {
+    "16": "frame 14.png",
+    "32": "frame 14.png",
+    "48": "frame 14.png",
+    "128": "frame 14.png"
   },
   "background": {
     "service_worker": "service-worker.js"
   },
   "content_scripts": [
     {
-      "js": ["popup.js"],
-      "matches": ["http://*/*", "https://*/*"]
+      "js": [
+        "popup.js"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ]
     }
   ],
-  "permissions": ["alarms", "tabs", "background", "storage"],
-  "host_permissions": ["http://*/*", "https://*/*"]
+  "permissions": [
+    "alarms",
+    "tabs",
+    "background",
+    "storage",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ]
 }

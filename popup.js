@@ -174,8 +174,9 @@ const closeDuplicatedTabs = async (duplicateTabs) => {
   const tabIds = duplicateTabs.map((tab) => tab.tabId);
   await chrome.tabs.remove(tabIds);
 
-  tabs = tabs.filter((tab) => !tabIds.includes(tab.id));
-  updateUIText("No duplicated tabs", `with ${tabs.length} tabs opened`);
+  // Re-query tabs to get the latest count
+  tabs = await queryTabs();
+  updateUI();
 };
 
 // Sort tabs by favicon URL
@@ -188,6 +189,9 @@ const sortByIcons = async (tabIcons) => {
   for (let i = 0; i < sorted.length; i++) {
     await chrome.tabs.move(sorted[i].tabId, { index: i });
   }
+  // Re-query tabs to get the latest count/order
+  tabs = await queryTabs();
+  updateUI();
 };
 
 // Update UI with tab count and duplicates
@@ -233,7 +237,11 @@ const init = async () => {
     // Auto-left settings
     autoLeftEnabled = storage.autoLeftEnabled || false;
     UI_ELEMENTS.autoLeftSwitch.checked = autoLeftEnabled;
-    UI_ELEMENTS.autoLeftSwitch.addEventListener("change", toggleAutoLeft);
+    UI_ELEMENTS.autoLeftSwitch.addEventListener("change", async (e) => {
+      toggleAutoLeft(e);
+      tabs = await queryTabs();
+      updateUI();
+    });
 
     // Auto-close duplicates settings
     autoCloseEnabled = storage.autoCloseEnabled || false;
@@ -241,14 +249,26 @@ const init = async () => {
     UI_ELEMENTS.autoCloseSwitch.checked = autoCloseEnabled;
     UI_ELEMENTS.autoCloseMinutes.value = autoCloseMinutes;
     UI_ELEMENTS.minutesDisplayBtn.textContent = formatAutoCloseLabel(autoCloseMinutes);
-    UI_ELEMENTS.autoCloseSwitch.addEventListener("change", toggleAutoClose);
+    UI_ELEMENTS.autoCloseSwitch.addEventListener("change", async (e) => {
+      toggleAutoClose(e);
+      tabs = await queryTabs();
+      updateUI();
+    });
     UI_ELEMENTS.minutesDisplayBtn.addEventListener("click", showMinutesEdit);
-    UI_ELEMENTS.saveMinutesBtn.addEventListener("click", saveAutoCloseMinutes);
+    UI_ELEMENTS.saveMinutesBtn.addEventListener("click", async () => {
+      saveAutoCloseMinutes();
+      tabs = await queryTabs();
+      updateUI();
+    });
 
     // Prevent duplicates settings
     preventDuplicatesEnabled = storage.preventDuplicatesEnabled || false;
     UI_ELEMENTS.preventDuplicatesSwitch.checked = preventDuplicatesEnabled;
-    UI_ELEMENTS.preventDuplicatesSwitch.addEventListener("change", togglePreventDuplicates);
+    UI_ELEMENTS.preventDuplicatesSwitch.addEventListener("change", async (e) => {
+      togglePreventDuplicates(e);
+      tabs = await queryTabs();
+      updateUI();
+    });
 
     tabs = queriedTabs;
     updateUI();

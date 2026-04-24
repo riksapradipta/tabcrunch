@@ -26,12 +26,18 @@
 :root {
   color-scheme: light dark;
   --popup-bg: #f3f4f6;
-  --popup-surface: #ffffff;
-  --popup-surface-2: #eef2f7;
-  --popup-surface-hover: #e5e7eb;
-  --popup-text: #111827;
-  --popup-muted: #6b7280;
-  --popup-border: rgba(17, 24, 39, 0.08);
+
+  :root[data-theme="light"] .feature-card {
+    border-color: #d1d5db !important;
+    /* Tailwind gray-300 */
+  }
+
+  @media (prefers-color-scheme: light) {
+    .feature-card {
+      border-color: #d1d5db !important;
+    }
+  }
+
   --popup-accent: #fe7e39;
   --popup-primary: #487ae3;
   --popup-primary-hover: #3f6ccd;
@@ -102,7 +108,16 @@ body.bg-secondary {
 
 .feature-card {
   background-color: var(--popup-surface) !important;
-  border: 1px solid var(--popup-border);
+  border: 1.5px solid var(--popup-border);
+
+  :root[data-theme="light"] .feature-card,
+  @media (prefers-color-scheme: light) {
+    .feature-card {
+      border-color: #d1d5db !important;
+      /* Tailwind gray-300 */
+    }
+  }
+
   border-radius: 19px;
   height: 150px;
   color: var(--popup-text);
