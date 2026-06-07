@@ -24,7 +24,7 @@
   "content_scripts": [
     {
       "js": [
-        "popup.js"
+        "content-script.js"
       ],
       "matches": [
         "http://*/*",

@@ -1,3 +1,4 @@
+
 // Constants
 const UI_ELEMENTS = {
   titleElement: document.getElementById("title"),
@@ -12,6 +13,7 @@ const UI_ELEMENTS = {
   minutesDisplayBtn: document.getElementById("minutesDisplayBtn"),
   minutesEditGroup: document.getElementById("minutesEditGroup"),
   preventDuplicatesSwitch: document.getElementById("preventDuplicatesSwitch"),
+
 };
 
 const collator = new Intl.Collator();
@@ -222,11 +224,18 @@ const togglePreventDuplicates = (event) => {
 };
 
 // Initialize extension
+
 const init = async () => {
   try {
     // Load settings and tabs in parallel
     const [storage, queriedTabs] = await Promise.all([
-      chrome.storage.sync.get(["autoLeftEnabled", "autoCloseEnabled", "autoCloseMinutes", "preventDuplicatesEnabled", "themeMode"]),
+      chrome.storage.sync.get([
+        "autoLeftEnabled",
+        "autoCloseEnabled",
+        "autoCloseMinutes",
+        "preventDuplicatesEnabled",
+        "themeMode"
+      ]),
       queryTabs(),
     ]);
 

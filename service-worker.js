@@ -249,8 +249,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "updateAutoClose") {
     setupAutoCloseAlarm();
     sendResponse({ success: true });
+    return true;
   }
-  return true;
+  return false;
 });
 
 // Initialize alarm on service worker start
