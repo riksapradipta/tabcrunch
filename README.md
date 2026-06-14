@@ -1,28 +1,27 @@
 # TabCrunch
 
-A Chrome extension to manage and clean up your tabs efficiently.
-
+Tired of having too many tabs open? TabCrunch helps you clean up and organize your browser tabs.
 
 ## Features
 
-- **Remove Duplicated Tabs**
-   - Instantly close duplicate tabs (skips active and media-playing tabs)
-   - Use the popup or right-click any page for a clear the duplicated tabs
-- **Auto-close Duplicates**
-   - Automatically closes duplicate tabs at your chosen interval (1-60 minutes)
-- **Sort Tabs**
-   - Organize all your tabs by icon for a tidier tab strip
-- **Smart Tab Grouping**
-   - New tabs are placed next to others from the same website
-- **Live Tab Count**
-   - Always shows the current number of open tabs in the popup
-- **Light/Dark Mode Toggle**
-   - Switch between light and dark themes, or follow your system setting
+- **Remove Duplicated Tabs** — Finds and closes tabs that are open more than once. Won't close the tab you're looking at or any tab playing music/video. Use the "Clear" button in the popup, or right-click any page and choose "Remove duplicated tabs."
+- **Auto-close Duplicates** — Turn this on and TabCrunch will automatically clean up duplicate tabs every few minutes. You can set how often it runs (anywhere from 1 to 60 minutes).
+- **Prevent Duplicates** — When this is on, if you try to open a page that's already open in another tab, TabCrunch will switch you to the existing tab instead of opening a new one.
+- **Smart Tab Grouping (Auto-left)** — New tabs automatically appear right next to other tabs from the same website. No more hunting for related tabs across your tab bar.
+- **Sort Tabs by Icon** — Rearranges all your tabs in order by website icon. Groups same-site tabs together with one click.
+- **Live Tab Count** — The popup shows you exactly how many tabs you have open and how many are duplicates.
+- **Duplicate Badge** — A red dot appears on the TabCrunch icon whenever duplicate tabs are detected.
+- **Light/Dark Mode** — Choose light, dark, or let it follow your computer's setting. Your choice is saved even after closing Chrome.
 
+## Privacy
+
+TabCrunch works entirely on your device. It does not collect, store, or send your data anywhere — no tracking, no analytics, no selling your information. Everything stays in your browser.
+
+This project is open source, so anyone can verify exactly what it does. You can even ask an AI to check the code if you want! :D
 
 ## Installation (Developer Mode)
 
-Since this extension is not on the Chrome Web Store, you can install it manually:
+This extension isn't on the Chrome Web Store yet, so you'll need to install it manually:
 
 ### Option 1: Clone the Repository
 
@@ -31,50 +30,51 @@ Since this extension is not on the Chrome Web Store, you can install it manually
    git clone https://github.com/riksapradipta/tabcrunch.git
    ```
 
-2. Open Chrome and navigate to `chrome://extensions/`
+2. Open Chrome and go to `chrome://extensions/`
 
-3. Enable **Developer mode** by toggling the switch in the top-right corner
+3. Turn on **Developer mode** (toggle in the top-right corner)
 
 4. Click **Load unpacked**
 
-5. Select the `tabcrunch` folder you just cloned
+5. Select the `tabcrunch` folder you just downloaded
 
-6. The extension is now installed! You should see the TabCrunch icon in your toolbar
+6. You're all set! You'll see the TabCrunch icon in your toolbar
 
 ### Option 2: Download ZIP
 
 1. Go to the [repository page](https://github.com/riksapradipta/tabcrunch)
 
-2. Click the green **Code** button, then click **Download ZIP**
+2. Click the green **Code** button, then **Download ZIP**
 
-3. Extract the ZIP file to a folder on your computer
+3. Unzip the file somewhere on your computer
 
-4. Open Chrome and navigate to `chrome://extensions/`
+4. Open Chrome and go to `chrome://extensions/`
 
-5. Enable **Developer mode** by toggling the switch in the top-right corner
+5. Turn on **Developer mode** (toggle in the top-right corner)
 
 6. Click **Load unpacked**
 
-7. Select the extracted `tabcrunch-main` folder
+7. Select the `tabcrunch-main` folder you just unzipped
 
-8. The extension is now installed!
+8. Done! The TabCrunch icon will appear in your toolbar
 
 ## Usage
 
-Click on the TabCrunch icon in your Chrome toolbar to open the popup:
+Click the TabCrunch icon in your Chrome toolbar to open the popup:
 
-- **Auto-left Toggle** - Enable to automatically group new tabs with tabs from the same website
-- **Clear Button** - Manually remove all duplicate tabs
-- **Sort Button** - Sort all tabs by their favicon
-- **Auto-close Toggle** - Enable automatic duplicate removal at your specified interval
+- **Auto-left** — Turn this on to keep tabs from the same website grouped together
+- **Clear** — Click to close all duplicate tabs right away
+- **Sort** — Click to rearrange your tabs by website icon
+- **Prevent Duplicates** — Turn this on to automatically switch to open tabs instead of making new duplicates
+- **Auto-close** — Turn this on to have TabCrunch automatically clean up duplicates on a schedule
 
-## Updating the Extension
+## Updating
 
-If you installed via git clone:
+If you installed with git clone:
 ```bash
 cd tabcrunch
 git pull
 ```
 Then go to `chrome://extensions/` and click the refresh icon on the TabCrunch card.
 
-If you installed via ZIP, download the new ZIP and repeat the installation steps.
+If you installed from a ZIP, download the new ZIP and repeat the installation steps.
