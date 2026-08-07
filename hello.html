@@ -19,10 +19,10 @@
   <link rel="stylesheet" href="./popup.css" />
 </head>
 
-<body class="bg-secondary">
+<body class="bg-secondary" role="main">
   <div class="row m-2 p-3 bg-dark text-white rounded-4 align-items-center g-2">
     <div class="col">
-      <div id="title" class="nice" style="font-size: 16px">0</div>
+      <div id="title" class="nice" style="font-size: 16px" aria-live="polite">0</div>
       <div class="description" id="description" style="font-size: 16px">
         tabs opened
       </div>
@@ -31,7 +31,7 @@
       <div class="d-flex align-items-center gap-2 theme-toggle-wrap">
         <span class="theme-label">Light</span>
         <div class="form-check form-switch mb-0">
-          <input class="form-check-input" type="checkbox" id="themeToggleSwitch">
+          <input class="form-check-input" type="checkbox" id="themeToggleSwitch" aria-label="Toggle dark mode">
         </div>
         <span class="theme-label">Dark</span>
       </div>
@@ -43,11 +43,11 @@
         <div class="feature-card bg-dark p-3 d-flex flex-column">
           <div>
             <p class="mb-1 feature-title">Auto-group</p>
-            <p class="feature-subtitle">Automatically group newly created tabs with its kind.</p>
+            <p class="feature-subtitle">New tabs land next to related ones. Same site, same spot.</p>
           </div>
           <div class="mt-auto">
             <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" value="" id="checkNativeSwitch" switch>
+              <input class="form-check-input" type="checkbox" value="" id="checkNativeSwitch" switch aria-label="Auto-group tabs by site">
             </div>
           </div>
         </div>
@@ -57,11 +57,10 @@
           <div>
             <p class="mb-1 feature-title">Clear duplicated
               tabs</p>
-            <p class="feature-subtitle">(except active tabs
-              and media playing tabs)</p>
+            <p class="feature-subtitle">One click removes extras. Active and playing tabs stay safe.</p>
           </div>
           <div class="mt-auto">
-            <button type="button" class="duplicate btn btn-secondary custom-text-color btn-sm">
+            <button type="button" class="duplicate btn btn-secondary custom-text-color btn-sm" aria-label="Clear duplicate tabs">
               Clear
             </button>
           </div>
@@ -71,10 +70,10 @@
         <div class="feature-card bg-dark p-3 d-flex flex-column">
           <div>
             <p class="mb-1 feature-title">Sort tabs</p>
-            <p class="feature-subtitle">Sort your tabs based on icons</p>
+            <p class="feature-subtitle">Group tabs by site. Find anything at a glance.</p>
           </div>
           <div class="mt-auto">
-            <button id="sortButton" type="button" class="btn btn-primary btn-sm">
+            <button id="sortButton" type="button" class="btn btn-primary btn-sm" aria-label="Sort tabs by site">
               Sort
             </button>
           </div>
@@ -87,12 +86,11 @@
           <div>
             <p class="mb-1 feature-title">Prevent duplicates
             </p>
-            <p class="feature-subtitle">Switch to existing tab instead of opening
-              duplicate</p>
+            <p class="feature-subtitle">Opens the tab you already have instead of a new one.</p>
           </div>
           <div class="mt-auto">
             <div class="form-check form-switch mb-0">
-              <input class="form-check-input" type="checkbox" id="preventDuplicatesSwitch">
+              <input class="form-check-input" type="checkbox" id="preventDuplicatesSwitch" aria-label="Prevent duplicate tabs">
             </div>
           </div>
         </div>
@@ -102,18 +100,16 @@
           <div>
             <p class="mb-1 feature-title">Auto-close duplicates
             </p>
-            <p class="feature-subtitle">Automatically close duplicate tabs (skips
-              active & media playing tabs)</p>
+            <p class="feature-subtitle">Finds and closes extras on a schedule. Your active tabs are always protected.</p>
           </div>
           <div class="mt-auto d-flex align-items-center gap-2">
             <div class="form-check form-switch mb-0">
-              <input class="form-check-input" type="checkbox" id="autoCloseSwitch">
+              <input class="form-check-input" type="checkbox" id="autoCloseSwitch" aria-label="Auto-close duplicate tabs">
             </div>
-            <button class="btn btn-secondary btn-sm" type="button" id="minutesDisplayBtn" style="font-size: 11px;">5
-              min</button>
-            <div class="input-group input-group-sm" id="minutesEditGroup" style="width: 140px; display: none;">
+            <button class="btn btn-secondary btn-sm" type="button" id="minutesDisplayBtn" style="font-size: 11px; white-space: nowrap;" aria-expanded="false" aria-controls="minutesEditGroup">5 min</button>
+            <div class="input-group input-group-sm minutes-edit-group" id="minutesEditGroup">
               <input type="number" class="form-control bg-secondary text-white border-0" id="autoCloseMinutes" min="1"
-                max="60" value="5" style="font-size: 11px;">
+                max="60" value="5" style="font-size: 11px;" aria-label="Auto-close interval in minutes">
               <span class="input-group-text bg-secondary text-white border-0" style="font-size: 11px;">min</span>
               <button class="btn btn-success btn-sm" type="button" id="saveMinutesBtn"
                 style="font-size: 10px; padding: 2px 6px;">Save</button>
@@ -122,7 +118,6 @@
         </div>
       </div>
     </div>
-  </div>
   </div>
   <script src="./popup.js" type="module"></script>
 </body>

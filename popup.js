@@ -146,7 +146,8 @@ const toggleAutoClose = (event) => {
 // Show edit mode for minutes
 const showMinutesEdit = () => {
   UI_ELEMENTS.minutesDisplayBtn.style.display = "none";
-  UI_ELEMENTS.minutesEditGroup.style.display = "flex";
+  UI_ELEMENTS.minutesEditGroup.classList.add("open");
+  UI_ELEMENTS.minutesDisplayBtn.setAttribute("aria-expanded", "true");
   UI_ELEMENTS.autoCloseMinutes.focus();
 };
 
@@ -164,7 +165,8 @@ const saveAutoCloseMinutes = () => {
     });
     // Update display button and hide edit group
     UI_ELEMENTS.minutesDisplayBtn.textContent = formatAutoCloseLabel(minutes);
-    UI_ELEMENTS.minutesEditGroup.style.display = "none";
+    UI_ELEMENTS.minutesEditGroup.classList.remove("open");
+    UI_ELEMENTS.minutesDisplayBtn.setAttribute("aria-expanded", "false");
     UI_ELEMENTS.minutesDisplayBtn.style.display = "inline-block";
   }
 };

@@ -6,15 +6,21 @@ function createRemoveDuplicatesMenu() {
     title: "Remove duplicated tabs",
     contexts: ["page"]
   });
+  chrome.contextMenus.create({
+    id: "close-domain-tabs",
+    title: "Close tabs from this website",
+    contexts: ["tab"]
+  });
 }
 
 createRemoveDuplicatesMenu();
-chrome.runtime.onInstalled.addListener(createRemoveDuplicatesMenu);
-
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "remove-duplicated-tabs") {
     // Remove duplicates regardless of autoCloseEnabled
     closeDuplicateTabs(true);
+  }
+  if (info.menuItemId === "close-domain-tabs") {
+    closeDomainTabs(tab.url);
   }
 });
 const ALARM_NAME = "autoCloseDuplicates";
@@ -146,16 +152,6 @@ async function groupTabByDomain(tabId, url, windowId) {
   }
 }
 
-// Normalize URL for duplicate comparison (removes trailing slash, keeps full path)
-function normalizeUrl(url) {
-  try {
-    const parsed = new URL(url);
-    return parsed.origin + parsed.pathname.replace(/\/$/, '') + parsed.search + parsed.hash;
-  } catch {
-    return url;
-  }
-}
-
 // Close duplicate tabs - skips active tabs and tabs playing media/audio
 
 // If force is true, always remove duplicates regardless of autoCloseEnabled
@@ -188,6 +184,22 @@ async function closeDuplicateTabs(force = false) {
   if (tabsToClose.length > 0) {
     await chrome.tabs.remove(tabsToClose);
     console.log(`Auto-closed ${tabsToClose.length} duplicate tabs`);
+  }
+}
+
+// Close all other tabs sharing the same domain, keeping active and audible tabs
+async function closeDomainTabs(url) {
+  const hostname = getHostname(url);
+  if (!hostname) return;
+
+  const tabs = await chrome.tabs.query({});
+  const toClose = tabs
+    .filter(t => t.url && getHostname(t.url) === hostname && !t.active && !t.audible)
+    .map(t => t.id);
+
+  if (toClose.length) {
+    await chrome.tabs.remove(toClose);
+    console.log(`Closed ${toClose.length} tabs from ${hostname}`);
   }
 }
 
